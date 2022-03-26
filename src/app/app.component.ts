@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { type } from 'os';
 import { Satellite } from './satellite';
 
 @Component({
@@ -11,6 +12,7 @@ export class AppComponent {
 
   sourceList: Satellite[];
   displayList: Satellite[];
+  typeList: string[];
 
 	constructor() {
 		this.sourceList = [];
@@ -31,7 +33,7 @@ export class AppComponent {
 
 				 // make a copy of the sourceList to be shown to the user
 				 this.displayList = this.sourceList.slice(0);
-	  
+				 this.typeList = this.getSatelliteTypeList(this.sourceList);
 			}.bind(this));
 		}.bind(this));
 
@@ -42,13 +44,24 @@ export class AppComponent {
 		searchTerm = searchTerm.toLowerCase();
 		for(let i=0; i < this.sourceList.length; i++) {
 			let name = this.sourceList[i].name.toLowerCase();
-			if (name.indexOf(searchTerm) >= 0) {
+			let type = this.sourceList[i].type.toLocaleLowerCase();
+			let orbitType = this.sourceList[i].orbitType.toLocaleLowerCase();
+			if (name.indexOf(searchTerm) >= 0 || type === searchTerm || orbitType === searchTerm) {
 				matchingSatellites.push(this.sourceList[i]);
 			}
 		}
 		// assign this.displayList to be the array of matching satellites
 		// this will cause Angular to re-make the table, but now only containing matches
 		this.displayList = matchingSatellites;
+	}
+
+	getSatelliteTypeList(satellites: Satellite[]): string[] {
+		let resultList = [];
+		for(let i = 0; i < satellites.length; i++) {
+			if(resultList.indexOf(satellites[i].type) === -1)
+			resultList.push(satellites[i].type);
+		}
+		return resultList;
 	}
 
 
